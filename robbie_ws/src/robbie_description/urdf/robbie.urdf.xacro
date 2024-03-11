@@ -1,0 +1,303 @@
+<?xml version="1.0"?>
+<robot name="robbie" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <gazebo>
+        <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
+            <!-- Update rate in Hz -->
+            <update_rate>50</update_rate>
+            <!-- wheels -->
+            <left_joint>left_front_wheel_joint</left_joint>
+            <right_joint>right_front_wheel_joint</right_joint>
+            <!-- kinematics -->
+            <wheel_separation>0.33282</wheel_separation>
+            <wheel_diameter>0.19</wheel_diameter>
+            <!-- output -->
+            <publish_odom>true</publish_odom>
+            <publish_odom_tf>true</publish_odom_tf>
+            <publish_wheel_tf>true</publish_wheel_tf>
+            <odometry_topic>odom</odometry_topic>
+            <odometry_frame>odom</odometry_frame>
+            <robot_base_frame>base_footprint</robot_base_frame>
+        </plugin>
+    </gazebo>
+      
+
+    <gazebo reference="camera_link">
+      <material>Gazebo/Red</material>
+      <sensor name="camera_sensor" type="camera">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <update_rate>10.0</update_rate>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <frame_name>custom_frame</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+  <link name="base_footprint" />
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint" />
+    <child link="base_link" />
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin xyz="-0.0275477195536098 0.0128172029487573 0.0262658587986981" rpy="0 0 0"/>
+      <mass value="4.38393615968554"/>
+      <inertia ixx="0.0355967144794858" ixy="1.44954092265228E-05" ixz="-5.94242658306167E-05"
+               iyy="0.0709794850323618" iyz="1.64084765197745E-05" izz="0.0922802904915334"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/base_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/base_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Camera Link -->
+  <link name="camera_link">
+    <inertial>
+      <origin xyz="-0.0114440210927269 -0.00170498094169685 -0.00013610820163712" rpy="0 0 0"/>
+      <mass value="0.107910424499118"/>
+      <inertia ixx="7.12550225936061E-05" ixy="-1.78478321351014E-08" ixz="4.92977551446927E-08"
+               iyy="7.71002091398328E-06" iyz="2.4889731310988E-10" izz="7.02567329544767E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/camera_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.898039215686275 0.917647058823529 0.929411764705882 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/camera_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="camera_link_joint" type="fixed">
+    <origin xyz="0.294999927995358 0.0120073063795502 0.224506329980205" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+
+  <link name="right_front_wheel">
+  <inertial>
+    <origin xyz="1.57177604265257E-11 3.84195536495824E-10 -0.0199196799092506" rpy="0 0 0"/>
+    <mass value="0.947517622487007"/>
+    <inertia ixx="0.00263529976313977" ixy="-3.6684870358251E-13" ixz="-1.92247362640682E-13"
+             iyy="0.00263529975522272" iyz="-7.04968734349345E-14" izz="0.00501071454890536"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/right_front_wheel.STL"/>
+    </geometry>
+    <material name="">
+      <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/right_front_wheel.STL"/>
+    </geometry>
+  </collision>
+</link>
+
+<!-- Right Front Wheel Joint -->
+  <joint name="right_front_wheel_joint" type="continuous">
+    <origin xyz="0.0729119999999999 -0.184124599999999 -0.1665928" rpy="1.5707963267949 0 0"/>
+    <parent link="base_link"/>
+    <child link="right_front_wheel"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="10" velocity="10"/>
+    <dynamics damping="0.1" friction="0.1"/>
+</joint>
+
+<link name="left_front_wheel">
+  <inertial>
+    <origin xyz="-1.26729737814912E-10 3.63032576222722E-10 0.0199196799092508" rpy="0 0 0"/>
+    <mass value="0.947517622487009"/>
+    <inertia ixx="0.00263529976226659" ixy="2.50702779698319E-12" ixz="-2.04437825464689E-13"
+             iyy="0.00263529975609591" iyz="1.1565483697353E-14" izz="0.00501071454890537"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/left_front_wheel.STL"/>
+    </geometry>
+    <material name="">
+      <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/left_front_wheel.STL"/>
+    </geometry>
+  </collision>
+</link>
+
+<!-- Left Front Wheel Joint -->
+<joint name="left_front_wheel_joint" type="continuous">
+  <origin xyz="0.0729119999999998 0.1841246 -0.1665928" rpy="1.5707963267949 0 0"/>
+  <parent link="base_link"/>
+  <child link="left_front_wheel"/>
+  <axis xyz="0 0 -1"/>
+  <limit effort="10" velocity="10"/>
+  <dynamics damping="0.1" friction="0.1"/>
+</joint>
+
+<!-- Castor Left Link -->
+<link name="castor_left">
+  <inertial>
+    <origin xyz="-0.0160382579302657 -0.000360796045913742 -0.0408457213337043" rpy="0 0 0"/>
+    <mass value="0.175409239873886"/>
+    <inertia ixx="0.000376265562125672" ixy="-4.08537108129914E-08" ixz="-8.33769319343439E-05"
+             iyy="0.000367456331591104" iyz="-4.92639449498858E-08" izz="0.000322141908444309"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/castor_left.STL"/>
+    </geometry>
+    <material name="">
+      <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/castor_left.STL"/>
+    </geometry>
+  </collision>
+</link>
+
+<!-- Castor Left Joint -->
+<joint name="castor_left_joint" type="continuous">
+  <origin xyz="-0.316000000000002 0.174000000000001 -0.0370000000000003" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="castor_left"/>
+  <axis xyz="0 0 1"/>
+  <limit effort="10" velocity="0"/>
+</joint>
+
+<!-- Left Rear Wheel Link -->
+<link name="left_rear_wheel">
+  <inertial>
+    <origin xyz="-2.57859832317187E-06 -1.62106171311682E-05 0.0424961000652844" rpy="0 0 0"/>
+    <mass value="0.977397500478249"/>
+    <inertia ixx="0.00315278037453461" ixy="-2.63404495731575E-06" ixz="9.61305490740834E-08"
+             iyy="0.00314548510245149" iyz="5.97872837064641E-08" izz="0.00595537788753282"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/left_rear_wheel.STL"/>
+    </geometry>
+    <material name="">
+      <color rgba="0.109803921568627 0.109803921568627 0.109803921568627 1"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/left_rear_wheel.STL"/>
+    </geometry>
+  </collision>
+</link>
+
+<!-- Left Rear Wheel Joint -->
+<joint name="left_rear_wheel_joint" type="continuous">
+  <origin xyz="-0.056931674086251 0.0425 -0.131998461447417" rpy="1.5707963267949 0 0"/>
+  <parent link="castor_left"/>
+  <child link="left_rear_wheel"/>
+  <axis xyz="0 0 -1"/>
+  <limit effort="10" velocity="10"/>
+  <dynamics damping="0.1" friction="0.1"/>
+</joint>
+
+<!-- Castor Right Link -->
+<link name="castor_right">
+  <inertial>
+    <origin xyz="-0.0160382581338551 0.000348183540450797 -0.0408457213337035" rpy="0 0 0"/>
+    <mass value="0.175409239873882"/>
+    <inertia ixx="0.000376265562125663" ixy="-4.08537108126189E-08" ixz="-8.3376932879315E-05"
+             iyy="0.00036745633159109" iyz="-4.92633709240725E-08" izz="0.0003221419084443"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/castor_right.STL"/>
+    </geometry>
+    <material name="">
+      <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/castor_right.STL"/>
+    </geometry>
+  </collision>
+</link>
+
+<!-- Castor Right Joint -->
+<joint name="castor_right_joint" type="continuous">
+  <origin xyz="-0.316 -0.174 -0.037" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="castor_right"/>
+  <axis xyz="0 0 1"/>
+  <limit effort="10" velocity="0"/>
+</joint>
+
+<link name="right_rear_wheel">
+  <inertial>
+    <origin xyz="1.62101703494316E-05 -2.57893733188186E-06 -0.0425039001100165" rpy="0 0 0"/>
+    <mass value="0.977397479624592"/>
+    <inertia ixx="0.00314548508257928" ixy="2.63401551925689E-06" ixz="-5.97688105972883E-08"
+             iyy="0.00315278027430538" iyz="9.61286255668183E-08" izz="0.00595537777954947"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/right_rear_wheel.STL"/>
+    </geometry>
+    <material name="">
+      <color rgba="0.109803921568627 0.109803921568627 0.109803921568627 1"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file:///home/sk/robbie_ws/install/robbie_description/share/robbie_description/meshes/right_rear_wheel.STL"/>
+    </geometry>
+  </collision>
+</link>
+
+<!-- Right Rear Wheel Joint -->
+<joint name="right_rear_wheel_joint" type="continuous">
+  <origin xyz="-0.0569316740862509 -0.0425000000000001 -0.131998461447418" rpy="1.5707963267949 0 0"/>
+  <parent link="castor_right"/>
+  <child link="right_rear_wheel"/>
+  <axis xyz="0 0 -1"/>
+  <limit effort="10" velocity="10"/>
+  <dynamics damping="0.1" friction="0.1"/>
+</joint>
+</robot>
+
